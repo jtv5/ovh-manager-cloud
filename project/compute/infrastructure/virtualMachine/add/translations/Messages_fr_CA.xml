@@ -4,7 +4,7 @@
    <translation id="cpcivm_add_button_completed_text" qtlid="249094">Lancer maintenant</translation>
    <translation id="cpcivm_add_step1_title" qtlid="482719">Sélectionnez un OS ou un Snapshot</translation>
    <translation id="cpcivm_add_step1_tab_os_linux" qtlid="296856">Distributions Unix</translation>
-   <translation id="cpcivm_add_step1_tab_os_windows" qtlid="248223">Distributions Windows</translation>
+   <translation id="cpcivm_add_step1_tab_os_windows" qtlid="248223">Système d'exploitations Windows</translation>
    <translation id="cpcivm_add_step1_tab_apps" qtlid="482732">Distributions + Apps</translation>
    <translation id="cpcivm_add_step1_tab_customs" qtlid="482745">Images personnalisées</translation>
    <translation id="cpcivm_add_step1_tab_shapshots" qtlid="10235">Snapshots</translation>
@@ -57,7 +57,7 @@
    <translation id="cpcivm_add_step3_label_ram" qtlid="483200">Mémoire vive :</translation>
    <translation id="cpcivm_add_step3_label_core" qtlid="483213">Processeur :</translation>
    <translation id="cpcivm_add_step3_label_disk" qtlid="483226">Stockage :</translation>
-   <translation id="cpcivm_add_step3_label_bandwidth" qtlid="145358">Bande passante :</translation>
+   <translation id="cpcivm_add_step3_label_bandwidth" qtlid="145358">Bande passante:</translation>
    <translation id="cpcivm_add_step3_value_core" qtlid="483239">{{vcores}} vCores ({{frequency}} GHz)</translation>
    <translation id="cpcivm_add_step3_disabled_NOT_AVAILABLE" qtlid="400247">Non disponible dans cette région</translation>
    <translation id="cpcivm_add_step3_disabled_QUOTA_RAM" qtlid="483252">Dépasse le quota (RAM)</translation>
