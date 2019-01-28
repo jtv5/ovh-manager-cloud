@@ -6,7 +6,7 @@ angular.module('managerApp').config(($stateProvider) => {
     resolve: {
       isProjectUsingAgora: ($transition$, OvhApiCloudProject) => OvhApiCloudProject
         .v6().get({ serviceName: $transition$.params().projectId }).$promise
-        .then(({ planCode }) => planCode !== 'project.legacy'),
+        .then(({ planCode }) => planCode !== 'project.legacy' && planCode !== 'project.2018'),
     },
     redirectTo: transition => transition.injector().getAsync('isProjectUsingAgora')
       .then(isProjectUsingAgora => (isProjectUsingAgora ? 'iaas.pci-project.billing.vouchers.agora' : 'iaas.pci-project.billing.vouchers.legacy')),
