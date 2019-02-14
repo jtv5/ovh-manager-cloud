@@ -31,6 +31,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
       this.serviceName = this.$stateParams.projectId;
       this.loading = false;
       this.forecast = {
+        hourly: null,
         currencySymbol: null,
         alert: null,
         estimateTotals: null,
@@ -76,6 +77,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
           consumption: this.CloudProjectBillingAgoraService.getCurrentConsumption(serviceId),
         }))
         .then(({ billForecast, hourlyForecast, consumption }) => {
+          this.forecast.hourly = _.get(hourlyForecast, 'price', this.CloudProjectBillingAgoraService.formatEmptyPrice(this.forecast.currencySymbol));
           this.forecast.currentTotals = {
             total: billForecast.price.value + consumption.price.value,
             hourly: {
@@ -87,9 +89,6 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
           };
           this.forecast.estimateTotals = {
             total: billForecast.price.value + consumption.price.value,
-            hourly: {
-              total: hourlyForecast.price.value,
-            },
             monthly: {
               total: billForecast.price.value,
             },
@@ -106,6 +105,8 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
         .then(billingInfo => this.CloudProjectBillingService
           .getConsumptionDetails(billingInfo, billingInfo)
           .then((data) => {
+            this.forecast.hourly = this.CloudProjectBillingAgoraService.constructor
+              .formatPrice(data.totals.hourly.total, data.totals.currencySymbol);
             this.forecast.estimateTotals = data.totals;
             this.forecast.currencySymbol = this.forecast.estimateTotals.currencySymbol;
           })
@@ -164,7 +165,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
             label: labelNow,
           },
           endOfMonth: {
-            value: this.forecast.estimateTotals.hourly.total,
+            value: this.forecast.hourly.value,
             currencyCode: this.forecast.estimateTotals.currencySymbol,
             label: labelFuture,
           },
