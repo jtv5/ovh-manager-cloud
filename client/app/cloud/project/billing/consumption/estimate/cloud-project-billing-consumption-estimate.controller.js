@@ -30,7 +30,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
     $onInit() {
       this.serviceName = this.$stateParams.projectId;
       this.loading = false;
-      this.data = {
+      this.forecast = {
         currencySymbol: null,
         alert: null,
         estimateTotals: null,
@@ -76,7 +76,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
           consumption: this.CloudProjectBillingAgoraService.getCurrentConsumption(serviceId),
         }))
         .then(({ billForecast, hourlyForecast, consumption }) => {
-          this.data.currentTotals = {
+          this.forecast.currentTotals = {
             total: billForecast.price.value + consumption.price.value,
             hourly: {
               total: consumption.price.value,
@@ -85,7 +85,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
               total: billForecast.price.value,
             },
           };
-          this.data.estimateTotals = {
+          this.forecast.estimateTotals = {
             total: billForecast.price.value + consumption.price.value,
             hourly: {
               total: hourlyForecast.price.value,
@@ -94,7 +94,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
               total: billForecast.price.value,
             },
           };
-          this.data.currencySymbol = hourlyForecast.price.currencyCode;
+          this.forecast.currencySymbol = hourlyForecast.price.currencyCode;
         });
     }
 
@@ -106,8 +106,8 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
         .then(billingInfo => this.CloudProjectBillingService
           .getConsumptionDetails(billingInfo, billingInfo)
           .then((data) => {
-            this.data.estimateTotals = data.totals;
-            this.data.currencySymbol = this.data.estimateTotals.currencySymbol;
+            this.forecast.estimateTotals = data.totals;
+            this.forecast.currencySymbol = this.forecast.estimateTotals.currencySymbol;
           })
           .finally(() => {
             this.loaders.forecast = false;
@@ -125,7 +125,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
           billingInfo,
         ))
         .then((data) => {
-          this.data.currentTotals = data.totals;
+          this.forecast.currentTotals = data.totals;
         })
         .finally(() => {
           this.loaders.current = false;
@@ -159,25 +159,25 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
       this.consumptionChartData = {
         estimate: {
           now: {
-            value: this.data.currentTotals.hourly.total,
-            currencyCode: this.data.estimateTotals.currencySymbol,
+            value: this.forecast.currentTotals.hourly.total,
+            currencyCode: this.forecast.estimateTotals.currencySymbol,
             label: labelNow,
           },
           endOfMonth: {
-            value: this.data.estimateTotals.hourly.total,
-            currencyCode: this.data.estimateTotals.currencySymbol,
+            value: this.forecast.estimateTotals.hourly.total,
+            currencyCode: this.forecast.estimateTotals.currencySymbol,
             label: labelFuture,
           },
         },
         threshold: {
           now: {
-            value: this.data.alert.monthlyThreshold,
-            currencyCode: this.data.estimateTotals.currencySymbol,
+            value: this.forecast.alert.monthlyThreshold,
+            currencyCode: this.forecast.estimateTotals.currencySymbol,
             label: labelLimit,
           },
           endOfMonth: {
-            value: this.data.alert.monthlyThreshold,
-            currencyCode: this.data.estimateTotals.currencySymbol,
+            value: this.forecast.alert.monthlyThreshold,
+            currencyCode: this.forecast.estimateTotals.currencySymbol,
             label: labelLimit,
           },
         },
@@ -195,7 +195,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
           return this.getAlert(_.first(alertIds));
         })
         .then((alertObject) => {
-          this.data.alert = alertObject;
+          this.forecast.alert = alertObject;
           if (!_.isNull(alertObject)) {
             this.initConsumptionChart();
           }
@@ -211,7 +211,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
         controller: 'CloudProjectBillingConsumptionEstimateAlertAddCtrl',
         controllerAs: 'CloudProjectBillingConsumptionEstimateAlertAddCtrl',
         resolve: {
-          dataContext: () => this.data,
+          dataContext: () => this.forecast,
         },
       });
 
