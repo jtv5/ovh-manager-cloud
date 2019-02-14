@@ -1,21 +1,34 @@
 angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateCtrl',
   class CloudProjectBillingConsumptionEstimateCtrl {
     /* @ngInject */
-    constructor($q, $stateParams, $translate, $uibModal,
-      CloudMessage, CloudProjectBillingService, OvhApiCloudProjectAlerting,
-      OvhApiCloudProjectUsageCurrent, OvhApiCloudProjectUsageForecast) {
+    constructor(
+      $q,
+      $stateParams,
+      $translate,
+      $uibModal,
+      CloudMessage,
+      CloudProjectBillingAgoraService,
+      CloudProjectBillingService,
+      isProjectUsingAgora,
+      OvhApiCloudProjectAlerting,
+      OvhApiCloudProjectUsageCurrent,
+      OvhApiCloudProjectUsageForecast,
+    ) {
       this.$q = $q;
       this.$stateParams = $stateParams;
       this.$translate = $translate;
       this.$uibModal = $uibModal;
       this.CloudMessage = CloudMessage;
+      this.CloudProjectBillingAgoraService = CloudProjectBillingAgoraService;
       this.CloudProjectBillingService = CloudProjectBillingService;
+      this.isProjectUsingAgora = isProjectUsingAgora;
       this.OvhApiCloudProjectAlerting = OvhApiCloudProjectAlerting;
       this.OvhApiCloudProjectUsageCurrent = OvhApiCloudProjectUsageCurrent;
       this.OvhApiCloudProjectUsageForecast = OvhApiCloudProjectUsageForecast;
     }
 
     $onInit() {
+      this.serviceName = this.$stateParams.projectId;
       this.loading = false;
       this.data = {
         currencySymbol: null,
@@ -25,16 +38,18 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
       };
       this.loaders = {
         alert: false,
-        forecast: false,
+        forecast: true,
         current: false,
         deleteAlert: false,
       };
 
-      return this.initForecast()
-        .then(() => this.initCurrent())
+      return (this.isProjectUsingAgora ? this.getAgoraForecast() : this.getLegacyForecast())
         .then(() => this.initAlert())
         .catch((err) => {
           this.CloudMessage.error([this.$translate.instant('cpbe_estimate_price_error_message'), (err.data && err.data.message) || ''].join(' '));
+        })
+        .finally(() => {
+          this.loaders.forecast = false;
         });
     }
 
@@ -46,8 +61,44 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
       return moment().add(1, 'month');
     }
 
+    getLegacyForecast() {
+      return this.$q.all({
+        current: this.initCurrent(),
+        forecast: this.initForecast(),
+      });
+    }
+
+    getAgoraForecast() {
+      return this.CloudProjectBillingAgoraService.getProjectServiceInfos(this.serviceName)
+        .then(({ serviceId }) => this.$q.all({
+          billForecast: this.CloudProjectBillingAgoraService.getBillForecast(serviceId),
+          hourlyForecast: this.CloudProjectBillingAgoraService.getCurrentForecast(serviceId),
+          consumption: this.CloudProjectBillingAgoraService.getCurrentConsumption(serviceId),
+        }))
+        .then(({ billForecast, hourlyForecast, consumption }) => {
+          this.data.currentTotals = {
+            total: billForecast.price.value + consumption.price.value,
+            hourly: {
+              total: consumption.price.value,
+            },
+            monthly: {
+              total: billForecast.price.value,
+            },
+          };
+          this.data.estimateTotals = {
+            total: billForecast.price.value + consumption.price.value,
+            hourly: {
+              total: hourlyForecast.price.value,
+            },
+            monthly: {
+              total: billForecast.price.value,
+            },
+          };
+          this.data.currencySymbol = hourlyForecast.price.currencyCode;
+        });
+    }
+
     initForecast() {
-      this.loaders.forecast = true;
       return this.OvhApiCloudProjectUsageForecast.v6()
         .get({
           serviceName: this.$stateParams.projectId,
