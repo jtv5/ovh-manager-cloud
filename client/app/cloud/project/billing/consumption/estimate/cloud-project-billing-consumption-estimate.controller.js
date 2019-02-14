@@ -38,7 +38,9 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
         total: null,
         currencySymbol: this.me.currency.symbol,
         alert: null,
-        currentTotals: null,
+      };
+      this.consumption = {
+        hourly: null,
       };
       this.loaders = {
         alert: false,
@@ -86,19 +88,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
             this.forecast.currencySymbol,
           );
           this.forecast.total = billForecast.prices.withoutTax;
-          this.forecast.currentTotals = {
-            total: billForecast.price.value,
-            hourly: {
-              total: consumption.price.value,
-            },
-            monthly: {
-              total: parseFloat(
-                (billForecast.price.value - hourlyForecast.price.value)
-                  .toFixed(10),
-              ),
-            },
-          };
-          this.forecast.currencySymbol = hourlyForecast.price.currencyCode;
+          this.consumption.hourly = _.get(consumption, 'price', this.CloudProjectBillingAgoraService.formatEmptyPrice(this.forecast.currencySymbol));
         });
     }
 
@@ -134,7 +124,10 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
           billingInfo,
         ))
         .then((data) => {
-          this.forecast.currentTotals = data.totals;
+          this.consumption.hourly = this.CloudProjectBillingAgoraService.constructor.formatPrice(
+            data.totals.hourly.total,
+            data.totals.currencySymbol,
+          );
         })
         .finally(() => {
           this.loaders.current = false;
@@ -168,7 +161,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
       this.consumptionChartData = {
         estimate: {
           now: {
-            value: this.forecast.currentTotals.hourly.total,
+            value: this.consumption.hourly.value,
             currencyCode: this.forecast.currencySymbol,
             label: labelNow,
           },
