@@ -32,6 +32,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
       this.loading = false;
       this.forecast = {
         hourly: null,
+        total: null,
         currencySymbol: null,
         alert: null,
         estimateTotals: null,
@@ -78,6 +79,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
         }))
         .then(({ billForecast, hourlyForecast, consumption }) => {
           this.forecast.hourly = _.get(hourlyForecast, 'price', this.CloudProjectBillingAgoraService.formatEmptyPrice(this.forecast.currencySymbol));
+          this.forecast.total = billForecast.prices.withoutTax;
           this.forecast.currentTotals = {
             total: billForecast.price.value,
             hourly: {
@@ -91,7 +93,6 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
             },
           };
           this.forecast.estimateTotals = {
-            total: billForecast.price.value,
             monthly: {
               total: parseFloat(
                 (billForecast.price.value - hourlyForecast.price.value)
@@ -113,6 +114,8 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
           .then((data) => {
             this.forecast.hourly = this.CloudProjectBillingAgoraService.constructor
               .formatPrice(data.totals.hourly.total, data.totals.currencySymbol);
+            this.forecast.total = this.CloudProjectBillingAgoraService.constructor
+              .formatPrice(data.totals.total, data.totals.currencySymbol);
             this.forecast.estimateTotals = data.totals;
             this.forecast.currencySymbol = this.forecast.estimateTotals.currencySymbol;
           })
