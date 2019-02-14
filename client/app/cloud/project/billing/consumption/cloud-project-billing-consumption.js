@@ -14,6 +14,7 @@ angular.module('managerApp').config(($stateProvider) => {
       isProjectUsingAgora: ($transition$, OvhApiCloudProject) => OvhApiCloudProject
         .v6().get({ serviceName: $transition$.params().projectId }).$promise
         .then(({ planCode }) => planCode !== 'project.legacy' && planCode !== 'project.2018'),
+      me: /* @ngInject */ OvhApiMe => OvhApiMe.v6().get().$promise,
     },
     translations: {
       value: ['.'],

@@ -10,6 +10,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
       CloudProjectBillingAgoraService,
       CloudProjectBillingService,
       isProjectUsingAgora,
+      me,
       OvhApiCloudProjectAlerting,
       OvhApiCloudProjectUsageCurrent,
       OvhApiCloudProjectUsageForecast,
@@ -22,6 +23,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
       this.CloudProjectBillingAgoraService = CloudProjectBillingAgoraService;
       this.CloudProjectBillingService = CloudProjectBillingService;
       this.isProjectUsingAgora = isProjectUsingAgora;
+      this.me = me;
       this.OvhApiCloudProjectAlerting = OvhApiCloudProjectAlerting;
       this.OvhApiCloudProjectUsageCurrent = OvhApiCloudProjectUsageCurrent;
       this.OvhApiCloudProjectUsageForecast = OvhApiCloudProjectUsageForecast;
@@ -32,10 +34,10 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
       this.loading = false;
       this.forecast = {
         hourly: null,
+        monthly: null,
         total: null,
-        currencySymbol: null,
+        currencySymbol: this.me.currency.symbol,
         alert: null,
-        estimateTotals: null,
         currentTotals: null,
       };
       this.loaders = {
@@ -79,20 +81,16 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
         }))
         .then(({ billForecast, hourlyForecast, consumption }) => {
           this.forecast.hourly = _.get(hourlyForecast, 'price', this.CloudProjectBillingAgoraService.formatEmptyPrice(this.forecast.currencySymbol));
+          this.forecast.monthly = this.CloudProjectBillingAgoraService.constructor.formatPrice(
+            billForecast.prices.withoutTax.value - this.forecast.hourly.value,
+            this.forecast.currencySymbol,
+          );
           this.forecast.total = billForecast.prices.withoutTax;
           this.forecast.currentTotals = {
             total: billForecast.price.value,
             hourly: {
               total: consumption.price.value,
             },
-            monthly: {
-              total: parseFloat(
-                (billForecast.price.value - hourlyForecast.price.value)
-                  .toFixed(10),
-              ),
-            },
-          };
-          this.forecast.estimateTotals = {
             monthly: {
               total: parseFloat(
                 (billForecast.price.value - hourlyForecast.price.value)
@@ -114,10 +112,11 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
           .then((data) => {
             this.forecast.hourly = this.CloudProjectBillingAgoraService.constructor
               .formatPrice(data.totals.hourly.total, data.totals.currencySymbol);
+            this.forecast.monthly = this.CloudProjectBillingAgoraService.constructor
+              .formatPrice(data.totals.monthly.total, data.totals.currencySymbol);
             this.forecast.total = this.CloudProjectBillingAgoraService.constructor
               .formatPrice(data.totals.total, data.totals.currencySymbol);
             this.forecast.estimateTotals = data.totals;
-            this.forecast.currencySymbol = this.forecast.estimateTotals.currencySymbol;
           })
           .finally(() => {
             this.loaders.forecast = false;
@@ -170,24 +169,24 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
         estimate: {
           now: {
             value: this.forecast.currentTotals.hourly.total,
-            currencyCode: this.forecast.estimateTotals.currencySymbol,
+            currencyCode: this.forecast.currencySymbol,
             label: labelNow,
           },
           endOfMonth: {
             value: this.forecast.hourly.value,
-            currencyCode: this.forecast.estimateTotals.currencySymbol,
+            currencyCode: this.forecast.currencySymbol,
             label: labelFuture,
           },
         },
         threshold: {
           now: {
             value: this.forecast.alert.monthlyThreshold,
-            currencyCode: this.forecast.estimateTotals.currencySymbol,
+            currencyCode: this.forecast.currencySymbol,
             label: labelLimit,
           },
           endOfMonth: {
             value: this.forecast.alert.monthlyThreshold,
-            currencyCode: this.forecast.estimateTotals.currencySymbol,
+            currencyCode: this.forecast.currencySymbol,
             label: labelLimit,
           },
         },
