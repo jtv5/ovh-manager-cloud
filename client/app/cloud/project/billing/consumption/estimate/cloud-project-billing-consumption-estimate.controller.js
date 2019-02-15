@@ -43,19 +43,27 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
         hourly: null,
       };
       this.loaders = {
-        alert: false,
+        alert: true,
         forecast: true,
         current: false,
         deleteAlert: false,
       };
 
-      return (this.isProjectUsingAgora ? this.getAgoraForecast() : this.getLegacyForecast())
-        .then(() => this.initAlert())
+      return this.$q.all({
+        alert: this.initAlert(),
+        forecast: (this.isProjectUsingAgora ? this.getAgoraForecast() : this.getLegacyForecast()),
+      })
+        .then(({ alert }) => {
+          if (!_.isNull(alert)) {
+            this.initConsumptionChart();
+          }
+        })
         .catch((err) => {
           this.CloudMessage.error([this.$translate.instant('cpbe_estimate_price_error_message'), (err.data && err.data.message) || ''].join(' '));
         })
         .finally(() => {
           this.loaders.forecast = false;
+          this.loaders.alert = false;
         });
     }
 
@@ -187,7 +195,6 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
     }
 
     initAlert() {
-      this.loaders.alert = true;
       // list alerts ids
       return this.getAlertIds()
         .then((alertIds) => {
@@ -198,11 +205,7 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
         })
         .then((alertObject) => {
           this.forecast.alert = alertObject;
-          if (!_.isNull(alertObject)) {
-            this.initConsumptionChart();
-          }
-        }).finally(() => {
-          this.loaders.alert = false;
+          return alertObject;
         });
     }
 
