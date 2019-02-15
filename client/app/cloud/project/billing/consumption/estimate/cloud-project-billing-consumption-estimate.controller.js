@@ -38,22 +38,28 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
       hourly: null,
     };
     this.loaders = {
-      alert: false,
+      alert: true,
       forecast: true,
       current: false,
       deleteAlert: false,
     };
 
     return this.CloudProjectBillingAgoraService.getIfProjectUsesAgora(this.serviceName)
-      .then(projectUsesAgora => (projectUsesAgora
-        ? this.getAgoraForecast()
-        : this.getLegacyForecast()))
-      .then(() => this.initAlert())
+      .then(projectUsesAgora => this.$q.all({
+        alert: this.initAlert(),
+        forecast: (projectUsesAgora ? this.getAgoraForecast() : this.getLegacyForecast()),
+      }))
+      .then(({ alert }) => {
+        if (!_.isNull(alert)) {
+          this.initConsumptionChart();
+        }
+      })
       .catch((err) => {
         this.CloudMessage.error([this.$translate.instant('cpbe_estimate_price_error_message'), (err.data && err.data.message) || ''].join(' '));
       })
       .finally(() => {
         this.loaders.forecast = false;
+        this.loaders.alert = false;
       });
   }
 
@@ -191,12 +197,6 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
           return null;
         }
         return this.getAlert(_.first(alertIds));
-      })
-      .then((alertObject) => {
-        this.forecast.alert = alertObject;
-        if (!_.isNull(alertObject)) {
-          this.initConsumptionChart();
-        }
       }).finally(() => {
         this.loaders.alert = false;
       });
