@@ -91,11 +91,11 @@ angular.module('managerApp').controller('CloudProjectBillingConsumptionEstimateC
         }))
         .then(({ billForecast, hourlyForecast, consumption }) => {
           this.forecast.hourly = _.get(hourlyForecast, 'price', this.CloudProjectBillingAgoraService.formatEmptyPrice(this.forecast.currencySymbol));
-          this.forecast.monthly = this.CloudProjectBillingAgoraService.constructor.formatPrice(
-            billForecast.prices.withoutTax.value - this.forecast.hourly.value,
+          this.forecast.monthly = billForecast.prices.withoutTax;
+          this.forecast.total = this.CloudProjectBillingAgoraService.constructor.formatPrice(
+            this.forecast.monthly.value + this.forecast.hourly.value,
             this.forecast.currencySymbol,
           );
-          this.forecast.total = billForecast.prices.withoutTax;
           this.consumption.hourly = _.get(consumption, 'price', this.CloudProjectBillingAgoraService.formatEmptyPrice(this.forecast.currencySymbol));
         });
     }
