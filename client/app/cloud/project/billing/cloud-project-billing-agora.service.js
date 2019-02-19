@@ -33,7 +33,7 @@ angular.module('managerApp')
 
       static formatPrice(value, currencyCode) {
         return ({
-          value: value.toFixed(2),
+          value,
           text: `${value.toFixed(2)} ${currencyCode}`,
         });
       }
