@@ -63,11 +63,11 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
       });
   }
 
-  static getCurrentMonth() {
+  static getCurrentDate() {
     return moment();
   }
 
-  static getNextMonth() {
+  static getNextMonthDate() {
     return moment().add(1, 'month');
   }
 
