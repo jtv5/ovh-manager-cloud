@@ -3,7 +3,7 @@ angular.module('managerApp').controller('CloudProjectDeleteCtrl',
     $q, OvhApiCloudProjectInstance, OvhApiCloudProjectVolume, OvhApiCloudProjectSnapshot, $state,
     OvhApiCloudProjectStorage, OvhApiCloudProjectIpFailover, OvhApiCloudProjectIpV6,
     OvhApiCloudProject, OvhApiCloudProjectUsageCurrent, OvhApiCloudProjectCredit,
-    CloudProjectBillingService, TARGET) {
+    CloudProjectBillingLegacyService, TARGET) {
     const self = this;
     const { projectId } = $stateParams;
     const now = moment();
@@ -32,7 +32,8 @@ angular.module('managerApp').controller('CloudProjectDeleteCtrl',
         .get({
           serviceName: projectId,
         }).$promise
-        .then(response => CloudProjectBillingService.getConsumptionDetails(response, response))
+        .then(response => CloudProjectBillingLegacyService
+          .getConsumptionDetails(response, response))
         .then((data) => {
           self.bill = `${data.totals.hourly.total.toFixed(2)} ${data.totals.currencySymbol}`;
         })
