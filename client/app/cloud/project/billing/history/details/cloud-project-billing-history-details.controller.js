@@ -1,6 +1,6 @@
 angular.module('managerApp').controller('CloudProjectBillingHistoryDetailsCtrl',
   function CloudProjectBillingHistoryDetailsCtrl($state, $q, $translate, $stateParams, validParams,
-    CloudMessage, CloudProjectBillingService, OvhApiCloudProjectUsageHistory,
+    CloudMessage, CloudProjectBillingLegacyService, OvhApiCloudProjectUsageHistory,
     OvhApiCloudProjectUsageCurrent, OvhApiCloudProject, OvhApiMe, REDIRECT_URLS) {
     const self = this;
     self.year = null;
@@ -52,7 +52,7 @@ angular.module('managerApp').controller('CloudProjectBillingHistoryDetailsCtrl',
           };
         })
         .then(details => $q.all(details)
-          .then(allDetails => CloudProjectBillingService.getConsumptionDetails(
+          .then(allDetails => CloudProjectBillingLegacyService.getConsumptionDetails(
             allDetails.hourly, allDetails.monthly,
           )));
     }
