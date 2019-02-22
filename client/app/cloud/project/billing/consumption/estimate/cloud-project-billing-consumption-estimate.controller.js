@@ -49,6 +49,9 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
         alert: this.initAlert(),
         forecast: (projectUsesAgora ? this.getAgoraForecast() : this.getLegacyForecast()),
       }))
+      .then(() => {
+        this.initConsumptionChart();
+      })
       .catch((err) => {
         this.CloudMessage.error([this.$translate.instant('cpbe_estimate_price_error_message'), (err.data && err.data.message) || ''].join(' '));
       })
@@ -152,37 +155,40 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
   }
 
   initConsumptionChart() {
-    const labelNow = this.$translate.instant('cpbe_estimate_alert_chart_label_now');
-    const labelFuture = this.$translate.instant('cpbe_estimate_alert_chart_label_future');
-    const labelLimit = this.$translate.instant('cpbe_estimate_alert_chart_label_limit');
+    if (!_.isNull(this.forecast.alert)) {
+      const labelNow = this.$translate.instant('cpbe_estimate_alert_chart_label_now');
+      const labelFuture = this.$translate.instant('cpbe_estimate_alert_chart_label_future');
+      const labelLimit = this.$translate.instant('cpbe_estimate_alert_chart_label_limit');
 
-    this.consumptionChartData = {
-      estimate: {
-        now: {
-          value: this.consumption.hourly.value,
-          currencyCode: this.forecast.currencySymbol,
-          label: labelNow,
+      this.consumptionChartData = {
+        estimate: {
+          now: {
+            value: this.consumption.hourly.value,
+            currencyCode: this.forecast.currencySymbol,
+            label: labelNow,
+          },
+          endOfMonth: {
+            value: this.forecast.hourly.value,
+            currencyCode: this.forecast.currencySymbol,
+            label: labelFuture,
+          },
         },
-        endOfMonth: {
-          value: this.forecast.hourly.value,
-          currencyCode: this.forecast.currencySymbol,
-          label: labelFuture,
+        threshold: {
+          now: {
+            value: this.forecast.alert.monthlyThreshold,
+            currencyCode: this.forecast.currencySymbol,
+            label: labelLimit,
+          },
+          endOfMonth: {
+            value: this.forecast.alert.monthlyThreshold,
+            currencyCode: this.forecast.currencySymbol,
+            label: labelLimit,
+          },
         },
-      },
-      threshold: {
-        now: {
-          value: this.forecast.alert.monthlyThreshold,
-          currencyCode: this.forecast.currencySymbol,
-          label: labelLimit,
-        },
-        endOfMonth: {
-          value: this.forecast.alert.monthlyThreshold,
-          currencyCode: this.forecast.currencySymbol,
-          label: labelLimit,
-        },
-      },
-    };
+      };
+    }
   }
+
 
   initAlert() {
     // list alerts ids
@@ -195,11 +201,7 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
       })
       .then((alertObject) => {
         this.forecast.alert = alertObject;
-        if (!_.isNull(alertObject)) {
-          this.initConsumptionChart();
-        }
-      }).finally(() => {
-        this.loaders.alert = false;
+        return alertObject;
       });
   }
 
@@ -215,7 +217,8 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
     });
 
     modal.result.then(() => {
-      this.initAlert();
+      this.initAlert()
+        .then(() => this.initConsumptionChart());
     });
   }
 
@@ -231,6 +234,7 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
           alertId: _.first(alertIds),
         }).$promise.then(() => {
           this.CloudMessage.success(this.$translate.instant('cpbe_estimate_alert_delete_success'));
+          this.forecast.alert = null;
         });
       }
       return this.$q.reject({ data: { message: 'Alert not found' } });
@@ -240,8 +244,6 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
     }).finally(() => {
       this.loaders.deleteAlert = false;
     });
-
-    return this.initAlert();
   }
 }
 
