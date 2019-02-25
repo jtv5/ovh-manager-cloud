@@ -1,14 +1,15 @@
 angular.module('managerApp').controller('KubernetesServiceCtrl', class KubernetesServiceCtrl {
-  constructor($scope, $state, $stateParams, $translate, CloudMessage, ControllerHelper,
+  constructor($scope, $state, $stateParams, $translate, CucCloudMessage, ControllerHelper,
     Kubernetes, KUBERNETES) {
     this.$scope = $scope;
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.$translate = $translate;
-    this.CloudMessage = CloudMessage;
+    this.CucCloudMessage = CucCloudMessage;
     this.ControllerHelper = ControllerHelper;
     this.Kubernetes = Kubernetes;
     this.KUBERNETES = KUBERNETES;
+    this.upgradePolicy = null;
   }
 
   $onInit() {
@@ -43,8 +44,8 @@ angular.module('managerApp').controller('KubernetesServiceCtrl', class Kubernete
   }
 
   loadMessages() {
-    this.CloudMessage.unSubscribe('paas.kube.service');
-    this.messageHandler = this.CloudMessage.subscribe('paas.kube.service', { onMessage: () => this.refreshMessages() });
+    this.CucCloudMessage.unSubscribe('paas.kube.service');
+    this.messageHandler = this.CucCloudMessage.subscribe('paas.kube.service', { onMessage: () => this.refreshMessages() });
   }
 
   refreshMessages() {
@@ -56,6 +57,7 @@ angular.module('managerApp').controller('KubernetesServiceCtrl', class Kubernete
       .then((cluster) => {
         this.cluster = cluster;
         _.set(this.cluster, 'region', this.KUBERNETES.region);
+        this.setUpgradePolicy();
       })
       .catch(() => { this.displayError = true; })
       .finally(() => { this.loaders.cluster = false; });
@@ -81,7 +83,7 @@ angular.module('managerApp').controller('KubernetesServiceCtrl', class Kubernete
         };
       })
       .catch(() => {
-        this.CloudMessage.error(this.$translate.instant('kube_service_file_error'));
+        this.CucCloudMessage.error(this.$translate.instant('kube_service_file_error'));
       })
       .finally(() => {
         this.loaders.config = false;
@@ -96,6 +98,29 @@ angular.module('managerApp').controller('KubernetesServiceCtrl', class Kubernete
   resetCluster() {
     return this.$state.go('paas.kube.service.reset', {
       cluster: this.cluster,
+    });
+  }
+
+  setUpgradePolicy() {
+    this.upgradePolicy = _.find(this.Kubernetes.getUpgradePolicies(),
+      policy => policy.value === this.cluster.updatePolicy);
+  }
+
+  showUgradePolicy() {
+    this.ControllerHelper.modal.showModal({
+      modalConfig: {
+        templateUrl: 'app/kubernetes/service/upgrade-policy/kubernetes-service-upgrade-policy.html',
+        controller: 'kubernetesUpgradePolicyCtrl',
+        controllerAs: '$ctrl',
+        backdrop: 'static',
+        resolve: {
+          upgradePolicy: () => this.cluster.updatePolicy,
+        },
+      },
+      successHandler: (newUpdatePolicy) => {
+        this.cluster.updatePolicy = newUpdatePolicy;
+        this.setUpgradePolicy();
+      },
     });
   }
 });

@@ -5,7 +5,7 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
     $stateParams,
     $translate,
     $uibModal,
-    CloudMessage,
+    CucCloudMessage,
     CloudProjectBillingService,
     CloudProjectBillingLegacyService,
     OvhApiCloudProjectAlerting,
@@ -16,7 +16,7 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
     this.$stateParams = $stateParams;
     this.$translate = $translate;
     this.$uibModal = $uibModal;
-    this.CloudMessage = CloudMessage;
+    this.CucCloudMessage = CucCloudMessage;
     this.CloudProjectBillingService = CloudProjectBillingService;
     this.CloudProjectBillingLegacyService = CloudProjectBillingLegacyService;
     this.OvhApiCloudProjectAlerting = OvhApiCloudProjectAlerting;
@@ -53,7 +53,7 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
         this.initConsumptionChart();
       })
       .catch((err) => {
-        this.CloudMessage.error([this.$translate.instant('cpbe_estimate_price_error_message'), (err.data && err.data.message) || ''].join(' '));
+        this.CucCloudMessage.error([this.$translate.instant('cpbe_estimate_price_error_message'), (err.data && err.data.message) || ''].join(' '));
       })
       .finally(() => {
         this.loaders.forecast = false;
@@ -233,13 +233,13 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
           serviceName: this.$stateParams.projectId,
           alertId: _.first(alertIds),
         }).$promise.then(() => {
-          this.CloudMessage.success(this.$translate.instant('cpbe_estimate_alert_delete_success'));
+          this.CucCloudMessage.success(this.$translate.instant('cpbe_estimate_alert_delete_success'));
           this.forecast.alert = null;
         });
       }
       return this.$q.reject({ data: { message: 'Alert not found' } });
     }).catch((err) => {
-      this.CloudMessage.error([this.$translate.instant('cpbe_estimate_alert_delete_error'), (err.data && err.data.message) || ''].join(' '));
+      this.CucCloudMessage.error([this.$translate.instant('cpbe_estimate_alert_delete_error'), (err.data && err.data.message) || ''].join(' '));
       return this.$q.reject(err);
     }).finally(() => {
       this.loaders.deleteAlert = false;

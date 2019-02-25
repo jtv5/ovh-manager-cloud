@@ -1,9 +1,24 @@
 angular.module('managerApp').controller('CloudProjectDeleteCtrl',
-  function CloudProjectDeleteCtrl($scope, $uibModalInstance, $translate, CloudMessage, $stateParams,
-    $q, OvhApiCloudProjectInstance, OvhApiCloudProjectVolume, OvhApiCloudProjectSnapshot, $state,
-    OvhApiCloudProjectStorage, OvhApiCloudProjectIpFailover, OvhApiCloudProjectIpV6,
-    OvhApiCloudProject, OvhApiCloudProjectUsageCurrent, OvhApiCloudProjectCredit,
-    CloudProjectBillingLegacyService, TARGET) {
+  function CloudProjectDeleteCtrl(
+    $scope,
+    $uibModalInstance,
+    $translate,
+    CucCloudMessage,
+    $stateParams,
+    $q,
+    OvhApiCloudProjectInstance,
+    OvhApiCloudProjectVolume,
+    OvhApiCloudProjectSnapshot,
+    $state,
+    OvhApiCloudProjectStorage,
+    OvhApiCloudProjectIpFailover,
+    OvhApiCloudProjectIpV6,
+    OvhApiCloudProject,
+    OvhApiCloudProjectUsageCurrent,
+    OvhApiCloudProjectCredit,
+    CloudProjectBillingLegacyService,
+    TARGET,
+  ) {
     const self = this;
     const { projectId } = $stateParams;
     const now = moment();
@@ -105,10 +120,10 @@ angular.module('managerApp').controller('CloudProjectDeleteCtrl',
 
     self.confirm = function () {
       return deleteProject().then(() => {
-        CloudMessage.success($translate.instant('cloud_project_delete_email_sent'));
+        CucCloudMessage.success($translate.instant('cloud_project_delete_email_sent'));
         $uibModalInstance.close();
       }, () => {
-        CloudMessage.error($translate.instant('cloud_project_delete_error'));
+        CucCloudMessage.error($translate.instant('cloud_project_delete_error'));
       });
     };
 

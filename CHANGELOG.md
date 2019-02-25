@@ -1,3 +1,64 @@
+# [7.17.0](https://github.com/ovh-ux/ovh-manager-cloud/compare/v7.16.0...v7.17.0) (2019-02-20)
+
+
+### Bug Fixes
+
+* replace region add success message ([5e8f8d4](https://github.com/ovh-ux/ovh-manager-cloud/commit/5e8f8d4))
+
+
+### Features
+
+* **cloud.project.compute.infrastructure:** support NVIDIA GPU OS ([#1277](https://github.com/ovh-ux/ovh-manager-cloud/issues/1277)) ([0196991](https://github.com/ovh-ux/ovh-manager-cloud/commit/0196991))
+
+
+
+# [7.16.0](https://github.com/ovh-ux/ovh-manager-cloud/compare/v7.15.7...v7.16.0) (2019-02-19)
+
+
+### Bug Fixes
+
+* **i18n:** add missing translations ([ff24344](https://github.com/ovh-ux/ovh-manager-cloud/commit/ff24344))
+* **i18n:** add missing translations ([15e149d](https://github.com/ovh-ux/ovh-manager-cloud/commit/15e149d))
+* **i18n:** add missing translations ([593914c](https://github.com/ovh-ux/ovh-manager-cloud/commit/593914c))
+* **i18n:** add missing translations ([0f96a79](https://github.com/ovh-ux/ovh-manager-cloud/commit/0f96a79))
+
+
+### Features
+
+* **home:** add traffic apac guide ([12b3690](https://github.com/ovh-ux/ovh-manager-cloud/commit/12b3690))
+* **info:** show new DC available info message ([a59f115](https://github.com/ovh-ux/ovh-manager-cloud/commit/a59f115)), closes [#MBE-247](https://github.com/ovh-ux/ovh-manager-cloud/issues/MBE-247)
+
+
+
+## [7.15.7](https://github.com/ovh-ux/ovh-manager-cloud/compare/v7.15.6...v7.15.7) (2019-02-18)
+
+
+### Bug Fixes
+
+* add en translations ([86f8609](https://github.com/ovh-ux/ovh-manager-cloud/commit/86f8609))
+* **i18n:** add missing translations ([c153e62](https://github.com/ovh-ux/ovh-manager-cloud/commit/c153e62))
+
+
+
+## [7.15.6](https://github.com/ovh-ux/ovh-manager-cloud/compare/v7.15.5...v7.15.6) (2019-02-18)
+
+
+### Bug Fixes
+
+* **cloud.project.billing:** add new translations for APAC traffic limit ([#1281](https://github.com/ovh-ux/ovh-manager-cloud/issues/1281)) ([bb88931](https://github.com/ovh-ux/ovh-manager-cloud/commit/bb88931))
+* **deps:** remove ovh-angular-a-disabled from dependency ([f989711](https://github.com/ovh-ux/ovh-manager-cloud/commit/f989711)), closes [ovh-ux/manager#200](https://github.com/ovh-ux/manager/issues/200)
+* **i18n:** add missing translations ([cef1dc9](https://github.com/ovh-ux/ovh-manager-cloud/commit/cef1dc9))
+* **i18n:** add missing translations ([6490784](https://github.com/ovh-ux/ovh-manager-cloud/commit/6490784))
+* **i18n:** add missing translations ([286e1dd](https://github.com/ovh-ux/ovh-manager-cloud/commit/286e1dd))
+
+
+### Features
+
+* **cloud:** show bandwidth usage along with price group by region ([#1291](https://github.com/ovh-ux/ovh-manager-cloud/issues/1291)) ([094c914](https://github.com/ovh-ux/ovh-manager-cloud/commit/094c914))
+* **kubernetes:** add name field to the node add pop-up ([#1290](https://github.com/ovh-ux/ovh-manager-cloud/issues/1290)) ([038e502](https://github.com/ovh-ux/ovh-manager-cloud/commit/038e502))
+
+
+
 ## [7.15.5](https://github.com/ovh-ux/ovh-manager-cloud/compare/v7.15.4...v7.15.5) (2019-02-07)
 
 
