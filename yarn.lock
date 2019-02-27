@@ -7760,8 +7760,8 @@ ovh-angular-user-pref@ovh-ux/ovh-angular-user-pref#^0.3.1:
   resolved "https://codeload.github.com/ovh-ux/ovh-angular-user-pref/tar.gz/71d0b3c0606a2e2052505bda2a8e2ff06b0156e1"
 
 "ovh-api-services@git+https://github.com/ovh-ux/ovh-api-services.git#build/pci-migration":
-  version "3.31.0"
-  resolved "git+https://github.com/ovh-ux/ovh-api-services.git#df96193bbfa5fde8cf025adc671248d7badd446c"
+  version "4.2.0"
+  resolved "git+https://github.com/ovh-ux/ovh-api-services.git#104fd8889b00a0f9bf7fcb4168c3fb8909a8ed29"
   dependencies:
     lodash "^3.10.1"
 
