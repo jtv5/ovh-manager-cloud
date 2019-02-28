@@ -1,49 +1,51 @@
-angular.module('managerApp')
-  .service('CloudProjectBillingService',
-    class {
-      /* @ngInject */
-      constructor(
-        OvhApiCloudProject,
-        OvhApiMeConsumption,
-        OvhApiServiceRenewForecast,
-      ) {
-        this.OvhApiCloudProject = OvhApiCloudProject;
-        this.OvhApiMeConsumption = OvhApiMeConsumption;
-        this.OvhApiServiceRenewForecast = OvhApiServiceRenewForecast;
-      }
+import { PCI_LEGACY_PLANCODES } from './cloud-project-billing.constant';
 
-      getIfProjectUsesAgora(serviceName) {
-        return this.OvhApiCloudProject.v6().get({ serviceName }).$promise
-          .then(({ planCode }) => planCode !== 'project.legacy' && planCode !== 'project.2018');
-      }
+export default class CloudProjectBillingService {
+  /* @ngInject */
+  constructor(
+    OvhApiCloudProject,
+    OvhApiMeConsumption,
+    OvhApiServiceRenewForecast,
+  ) {
+    this.OvhApiCloudProject = OvhApiCloudProject;
+    this.OvhApiMeConsumption = OvhApiMeConsumption;
+    this.OvhApiServiceRenewForecast = OvhApiServiceRenewForecast;
+  }
 
-      getProjectServiceInfos(serviceName) {
-        return this.OvhApiCloudProject.ServiceInfos().v6().get({ serviceName }).$promise;
-      }
+  getIfProjectUsesAgora(serviceName) {
+    return this.OvhApiCloudProject.v6().get({ serviceName }).$promise
+      .then(({ planCode }) => !PCI_LEGACY_PLANCODES.includes(planCode));
+  }
 
-      getCurrentForecast(serviceId) {
-        return this.OvhApiMeConsumption.Usage().Forecast().v6().get().$promise
-          .then(forecast => _.find(forecast, { serviceId }));
-      }
+  getProjectServiceInfos(serviceName) {
+    return this.OvhApiCloudProject.ServiceInfos().v6().get({ serviceName }).$promise;
+  }
 
-      getCurrentConsumption(serviceId) {
-        return this.OvhApiMeConsumption.Usage().Current().v6().get().$promise
-          .then(consumption => _.find(consumption, { serviceId }));
-      }
+  getCurrentForecast(serviceId) {
+    return this.OvhApiMeConsumption.Usage().Forecast().v6().get().$promise
+      .then(forecast => _.find(forecast, { serviceId }));
+  }
 
-      getBillForecast(serviceId) {
-        return this.OvhApiServiceRenewForecast.v6()
-          .get({ serviceId, includeOptions: true }).$promise;
-      }
+  getCurrentConsumption(serviceId) {
+    return this.OvhApiMeConsumption.Usage().Current().v6().get().$promise
+      .then(consumption => _.find(consumption, { serviceId }));
+  }
 
-      static formatPrice(value, currencyCode) {
-        return ({
-          value,
-          text: `${value.toFixed(2)} ${currencyCode}`,
-        });
-      }
+  getBillForecast(serviceId) {
+    return this.OvhApiServiceRenewForecast.v6()
+      .get({ serviceId, includeOptions: true }).$promise;
+  }
 
-      formatEmptyPrice(currencyCode) {
-        return this.constructor.formatPrice(0, currencyCode);
-      }
+  static formatPrice(value, currencyCode) {
+    return ({
+      value,
+      text: `${value.toFixed(2)} ${currencyCode}`,
     });
+  }
+
+  formatEmptyPrice(currencyCode) {
+    return this.constructor.formatPrice(0, currencyCode);
+  }
+}
+
+angular.module('managerApp').service('CloudProjectBillingService', CloudProjectBillingService);
