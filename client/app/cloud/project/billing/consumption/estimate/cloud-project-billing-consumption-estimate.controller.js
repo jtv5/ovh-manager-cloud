@@ -126,7 +126,7 @@ export default class CloudProjectBillingConsumptionEstimateCtrl {
       ))
       .then((data) => {
         this.consumption.hourly = this.CloudProjectBillingService.constructor.formatPrice(
-          data.totals.total,
+          data.totals.hourly.total,
           this.forecast.currencySymbol,
         );
       })
