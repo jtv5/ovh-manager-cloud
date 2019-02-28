@@ -15,9 +15,15 @@
                 </div>
             </div>
             <oui-header-tabs>
-                <oui-header-tabs-dropdown data-text="{{ ::'cpc_header_tab_compute' | translate }}">
+                <oui-header-tabs-dropdown data-text="{{ ::'cpc_header_tab_compute' | translate }}"
+                data-track-on="click"
+                data-track-name="infraclickonstupidcompute"
+                data-track-click="action">
                     <oui-header-tabs-item data-text="{{ ::'cpc_tab_infra' | translate }}"
                                           data-state="iaas.pci-project.compute.infrastructure.diagram"
+                                          data-track-on="click"
+                                          data-track-name="clickoninfro"
+                                          data-track-click="action"
                                           data-state-params="{ serviceName: CloudProjectCtrl.serviceName }"></oui-header-tabs-item>
                     <oui-header-tabs-item data-text="{{ ::'cpc_tab_ssh' | translate }}"
                                           data-state="iaas.pci-project.compute.ssh"
