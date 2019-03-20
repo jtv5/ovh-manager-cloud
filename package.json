@@ -97,6 +97,7 @@
     "moment": "^2.19",
     "moment-duration-format": "^1.3",
     "ng-at-internet": "ovh-ux/ng-at-internet#^3.0.0",
+    "ng-ovh-chatbot": "https://github.com/ovh-ux/ng-ovh-chatbot#feat/revamp",
     "ng-slide-down": "TheRusskiy/ng-slide-down#~1.2",
     "ovh-angular-actions-menu": "ovh-ux/ovh-angular-actions-menu#^3.2.0",
     "ovh-angular-browser-alert": "ovh-ux/ovh-angular-browser-alert#^1.0.0",

@@ -1,5 +1,6 @@
 import '@uirouter/angularjs';
 import ngOvhApiv7 from '@ovh-ux/ng-ovh-apiv7';
+import ngOvhChatbot from 'ng-ovh-chatbot';
 import ngOvhCheckboxTable from '@ovh-ux/ng-ovh-checkbox-table';
 import ngOvhDocUrl from '@ovh-ux/ng-ovh-doc-url';
 import ngOvhFormFlat from '@ovh-ux/ng-ovh-form-flat';
@@ -26,6 +27,7 @@ angular.module('managerApp', [
   'ui.sortable',
 
   ngOvhApiv7,
+  ngOvhChatbot,
   ngOvhCheckboxTable,
   ngOvhDocUrl,
   ngOvhFormFlat,
